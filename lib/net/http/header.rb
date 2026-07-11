@@ -740,7 +740,11 @@ module Net::HTTPHeader
   #
   def main_type
     return nil unless @header['content-type']
-    self['Content-Type'].split(';').first.to_s.split('/')[0].to_s.strip
+    value = self['Content-Type']
+    offset = (value.index(';') || value.length).clamp(0, value.index('/') || value.length)
+    type = value[0, offset]
+    type.strip!
+    type
   end
 
   # Returns the trailing ('subtype') part of the
