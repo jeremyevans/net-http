@@ -759,9 +759,14 @@ module Net::HTTPHeader
   #
   def sub_type
     return nil unless @header['content-type']
-    _, sub = *self['Content-Type'].split(';').first.to_s.split('/')
-    return nil unless sub
-    sub.strip
+    value = self['Content-Type']
+    end_offset = value.index(";") || value.length
+    return unless start_offset = value.index("/")
+    return if start_offset > end_offset
+    start_offset += 1
+    sub = value[start_offset, end_offset - start_offset]
+    sub.strip!
+    sub
   end
 
   # Returns the trailing ('parameters') part of the value of field <tt>'Content-Type'</tt>,
